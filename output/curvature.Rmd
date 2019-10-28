@@ -1,0 +1,70 @@
+---
+title: "curvature"
+author: "GR5243 Project 3"
+date: "10/28/2019"
+output: html_document
+---
+
+```{r}
+eye_left <- 1:9
+eye_right <- 10:18
+frown_left <- 19:26
+frown_right <- 27:34
+nose <- 35:49
+mouse <- 50:63
+chin <- 64:78
+
+euclideanDistances <- function(pointsSet1, pointsSet2) {
+    if (length(pointsSet1) != length(pointsSet2)) {
+        stop("Invalid input: lengths of the vectors are not equal")
+    }
+    xDist = pointsSet1[, 1] - pointsSet2[, 1]
+    yDist = pointsSet1[, 2] - pointsSet2[, 2]
+    eucDist = sqrt(xDist * xDist + yDist * yDist)
+    eucDist
+}
+
+manhattanDistances <- function(pointsSet1, pointsSet2){
+    if (length(pointsSet1) != length(pointsSet2)) {
+        stop("Invalid input: lengths of the vectors are not equal")
+    }
+    xDist = pointsSet1[, 1] - pointsSet2[, 2]
+    yDist = pointsSet1[, 1] - pointsSet2[, 2]
+    manDist = abs(xDist) + abs(yDist)
+    manDist
+}
+#Euclidean Distances and Manhattan Distances
+```
+
+```{r}
+replication <- 2500
+frown_left_slope <- rep(0, replication)
+frown_right_slope <- rep(0, replication)
+eye_left_slope <- rep(0, replication)
+eye_right_slope <- rep(0, replication)
+mouth_percentage <- rep(0, replication)
+eye_percentage <- rep(0, replication)
+
+
+curvature_func <- function(dataSet){
+  for (i in 1:replication){
+  frown_left_slope[i] <- (dataSet[[i]][21,2] - dataSet[[i]][19,2]) / (dataSet[[i]][21,1] - dataSet[[i]][19,1])
+  
+  frown_right_slope[i] <- (dataSet[[i]][29,2] - dataSet[[i]][31,2]) / (dataSet[[i]][31,1] - dataSet[[i]][29,1])
+  
+  eye_left_slope[i] <- (dataSet[[i]][4,2] - dataSet[[i]][2,2]) / (dataSet[[i]][4,1] - dataSet[[i]][2,1])
+  
+  eye_right_slope[i] <- (dataSet[[i]][13,2] - dataSet[[i]][15,2]) / (dataSet[[i]][15,1] - dataSet[[i]][13,1])
+  
+  mouth_percentage[i] <- ((dataSet[[i]][52,2] - dataSet[[i]][56,2]) * (dataSet[[i]][54,1] - dataSet[[i]][50,1])) / ((dataSet[[i]][78,1] - dataSet[[i]][64,1]) * (dataSet[[i]][35,2] - dataSet[[i]][71,2]))
+  
+  eye_percentage[i] <- (((dataSet[[i]][4,2] - dataSet[[i]][8,2]) * (dataSet[[i]][6,1] - dataSet[[i]][2,1])) + ((dataSet[[i]][13,2] - dataSet[[i]][17,2]) * (dataSet[[i]][15,1] - dataSet[[i]][11,1]))) / ((dataSet[[i]][78,1] - dataSet[[i]][64,1]) * (dataSet[[i]][35,2] - dataSet[[i]][71,2]))
+
+  }
+  
+  data.frame(frown_left_slope = frown_left_slope, frown_right_slope = frown_right_slope, eye_left_slope = eye_left_slope, eye_right_slope = eye_right_slope,                  mouth_percentage = mouth_percentage, eye_percentage = eye_percentage)
+}
+
+curvature_func(fiducial_pt_list)
+
+```
