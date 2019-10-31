@@ -16,11 +16,11 @@ Term: Fall 2019
 
 + Project summary: 
 
-In this project, we created a classification engine for images of different facial expressions. We extract features using SFFS, KSVM. We also add some nonlinear features based on basic features.
+In this project, we created a classification engine for images of different facial expressions. We firstly extract linear distance features using SFFS and KSVM. Then, we also added some nonlinear features such as areas and slopes based on basic features.
 
-In terms of classifiers, we considered LDA, GBM, Boosting and SVM, RF. We cross compare the combinations of feature extraction methods and classifiers in order to find the best model. 
+In terms of classifiers, we considered GBM, LDA, KNN, Boosting, Random Forest and SVM methods. We cross compared the combinations of feature extraction methods and classifiers in order to find the optimal feature-classifer pair.
 
-We also use KNN as our baseline model to compare with selected feature set and our advanced model. The final advanced model we choose is SVM+. For code details, please check on lib directory.
+We also applied GBM as our baseline model to compare with selected feature set and our advanced model. The final advanced model we choose is (k) SVM+. For code details, please check on lib directory.
 	
 **Contribution statement**: ([default](doc/a_note_on_contributions.md)) All team members contributed equally in all stages of this project. All team members approve our work presented in this GitHub repository including this contributions statement. 
 
