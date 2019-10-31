@@ -36,18 +36,39 @@ if(!require("caret")){
   install.packages("caret")
 }
 
+
+if(!require("OpenImageR")){
+  install.packages("OpenImageR")
+}
+
+if(!require("FSelectorRcpp")){
+  install.packages("FSelectorRcpp")
+}
+
+if(!require("mlr")){
+  install.packages("mlr")
+}
+
+if(!require("kernlab")){
+  install.packages("kernlab")
+}
+
 library(R.matlab)
 library(readxl)
 library(dplyr)
 library(EBImage)
 library(ggplot2)
 library(caret)
+library(OpenImageR)
+library(FSelectorRcpp)
+library(mlr)
+library(kernlab)
 ```
 
 ### Step 0 set work directories, extract paths, summarize
 ```{r wkdir, eval=FALSE}
 set.seed(0)
-setwd("~/Project3-FacialEmotionRecognition/doc")
+# setwd("~/Project3-FacialEmotionRecognition/doc")
 # here replace it with your own path or manually set it in RStudio to where this rmd file is located. 
 # use relative path for reproducibility
 ```
@@ -74,9 +95,10 @@ In this chunk, we have a set of controls for the evaluation experiments.
 ```{r exp_setup}
 run.cv=TRUE # run cross-validation on the training set
 K <- 5  # number of CV folds
-run.feature.train=TRUE # process features for training set
-run.test=TRUE # run evaluation on an independent test set
-run.feature.test=TRUE # process features for test set
+run.feature.train=FALSE # process features for training set
+run.test=FALSE # run evaluation on an independent test set
+run.feature.test=FALSE # process features for test set
+run.feature.test.test=TRUE # process features for test_test set
 ```
 Using cross-validation or independent test set evaluation, we compare the performance of models with different specifications. In this Starter Code, we tune parameter k (number of neighbours) for KNN.
 
@@ -119,16 +141,8 @@ fiducial_pt_list <- lapply(1:n_files, readMat.matrix)
 save(fiducial_pt_list, file="../output/fiducial_pt_list.RData")
 ```
 
-### Step 3: construct features and responses
+### Step 3: feature selection
 
-+ The follow plots show how pairwise distance between fiducial points can work as feature for facial emotion recognition.
-
-  + In the first column, 78 fiducials points of each emotion are marked in order. 
-  + In the second column distributions of vertical distance between right pupil(1) and  right brow peak(21) are shown in  histograms. For example, the distance of an angry face tends to be shorter than that of a surprised face.
-  + The third column is the distributions of vertical distances between right mouth corner(50)
-and the midpoint of the upper lip(52).  For example, the distance of an happy face tends to be shorter than that of a face.
-
-![Figure1](../figs/feature_visualization.jpg)
 
 `feature.R` should be the wrapper for all your feature engineering functions and options. The function `feature( )` should have options that correspond to different scenarios for your project and produces an R object that contains features and responses that are required by all the models you are going to evaluate later. 
   
@@ -140,16 +154,102 @@ and the midpoint of the upper lip(52).  For example, the distance of an happy fa
 source("../lib/feature.R")
 tm_feature_train <- NA
 if(run.feature.train){
-  tm_feature_train <- system.time(dat_train <- feature(fiducial_pt_list, train_idx))
+  ## Distance calculation
+  tm_feature_train <- system.time(dat_train <- feature_train(fiducial_pt_list, train_idx))
+  dat_train <- cbind(dat_train, as.factor(info$emotion_idx[train_idx]))
+  colnames(dat_train)[dim(dat_train)[2]] <- "emotion_idx"
+  dat_train <- as.data.frame(dat_train)
+  colnames(dat_train)<-make.names(colnames(dat_train),unique=T)
+
+  ## Normalize
+  tm_feature_train <- tm_feature_train + 
+    system.time(dat_train_stand <- feature_normalization(dat_train[,c(-dim(dat_train)[2])]))
+ dat_train_stand <- cbind(dat_train_stand,dat_train$emotion_idx)
+ colnames(dat_train_stand)[dim(dat_train_stand)[2]] <- "emotion_idx"
+ 
+  ## Feature selection
+  tm_feature_train <- tm_feature_train + 
+    system.time(feature_name <- feature_selection(dat_train_stand,"emotion_idx"))
+  dat_train_selected <- dat_train[,feature_name]
+  
+  ## Calculate size from all selected distance
+  tm_feature_train <- tm_feature_train + 
+    system.time(dat_train_double <- feature_selection_size(dat_train_selected))
+  
+  ## Add manually selected feature
+  tm_feature_train <- tm_feature_train + 
+    system.time(dat_train_ratio <- manually_feature(fiducial_pt_list, train_idx))
+  
+  dat_train_selected_stand <- cbind(dat_train_selected,dat_train_double,dat_train_ratio)
+  dat_train_selected_stand <- feature_normalization(dat_train_selected_stand)
+  dat_train_selected_stand <- cbind(dat_train_selected_stand,dat_train$emotion_idx)
+  colnames(dat_train_selected_stand)[dim(dat_train_selected_stand)[2]] <- "emotion_idx"
+  
 }
 
 tm_feature_test <- NA
-if(run.feature.train){
-  tm_feature_test <- system.time(dat_test <- feature(fiducial_pt_list, test_idx))
+if(run.feature.test){
+  ## This is the result from test
+  feature_name <- c("point.7.to.point.21","point.10.to.point.13","point.10.to.point.33",
+                    "point.11.to.point.49","point.12.to.point.55","point.14.to.point.18",
+                    "point.23.to.point.50","point.34.to.point.46","point.50.to.point.62",
+                    "point.59.to.point.62")
+  
+  ## Distance Feature
+  tm_feature_test <- system.time(dat_test <- feature_train(fiducial_pt_list, test_idx))
+  dat_test <- cbind(dat_test, as.factor(info$emotion_idx[test_idx]))
+  colnames(dat_test)[dim(dat_test)[2]] <- "emotion_idx"
+  dat_test <- as.data.frame(dat_test)
+  colnames(dat_test)<-make.names(colnames(dat_test),unique=T)
+  dat_test_selected <- dat_test[,feature_name]
+  
+  ## Size Feature
+  tm_feature_test <- tm_feature_test +
+    system.time(dat_test_double <- feature_selection_size(dat_test_selected))
+  
+  ## Add manually selected feature
+  tm_feature_test <- tm_feature_test + 
+    system.time(dat_test_ratio <- manually_feature(fiducial_pt_list, test_idx))
+  
+  dat_test_selected_stand <- cbind(dat_test_selected,dat_test_double,dat_test_ratio)
+  dat_test_selected_stand <- feature_normalization(dat_test_selected_stand)
+  dat_test_selected_stand <- cbind(dat_test_selected_stand,dat_test$emotion_idx)
+  colnames(dat_test_selected_stand)[dim(dat_test_selected_stand)[2]] <- "emotion_idx"
 }
 
-save(dat_train, file="../output/feature_train.RData")
-save(dat_test, file="../output/feature_test.RData")
+tm_feature_test_test <- NA
+if(run.feature.test.test){
+  test_test_idx = c(1:2500)
+  ## This is the result from test
+  feature_name <- c("point.7.to.point.21","point.10.to.point.13","point.10.to.point.33",
+                    "point.11.to.point.49","point.12.to.point.55","point.14.to.point.18",
+                    "point.23.to.point.50","point.34.to.point.46","point.50.to.point.62",
+                    "point.59.to.point.62")
+  
+  ## Distance Feature
+  tm_feature_test_test <- system.time(dat_test_test <- feature_train(fiducial_pt_list, test_test_idx))
+  colnames(dat_test_test)<-make.names(colnames(dat_test_test),unique=T)
+  dat_test_test_selected <- dat_test_test[,feature_name]
+  
+  ## Size Feature
+  tm_feature_test_test <- tm_feature_test_test +
+    system.time(dat_test_test_double <- feature_selection_size(dat_test_test_selected))
+  
+  ## Add manually selected feature
+  tm_feature_test_test <- tm_feature_test_test + 
+    system.time(dat_test_test_ratio <- manually_feature(fiducial_pt_list, test_test_idx))
+  
+  dat_test_selected_stand_test <- cbind(dat_test_test_selected,dat_test_test_double,
+                                   dat_test_test_ratio)
+  dat_test_selected_stand_test <- feature_normalization(dat_test_selected_stand_test)
+  
+}
+
+
+save(dat_train_selected_stand, file="../output/feature_train.RData")
+save(dat_test_selected_stand, file="../output/feature_test.RData")
+save(dat_test_selected_stand_test, file="../output/feature_test_test.RData")
+
 ```
 
 ### Step 4: Train a classification model with training features and responses
@@ -243,7 +343,7 @@ Prediction performance matters, so does the running times for constructing featu
 ```{r running_time}
 cat("Time for constructing training features=", tm_feature_train[1], "s \n")
 cat("Time for constructing testing features=", tm_feature_test[1], "s \n")
-#cat("Time for training model=", tm_train[1], "s \n")
+# cat("Time for training model=", tm_train[1], "s \n")
 cat("Time for testing model=", tm_test[1], "s \n")
 ```
 
