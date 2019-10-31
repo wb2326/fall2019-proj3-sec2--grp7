@@ -1,11 +1,3 @@
-library(caret)
-load("C:/distance_train_selected_stand.RData")
-load("C:/distance_test_selected_stand.RData")
-load("C:/distance_train_selected_stand55.RData")
-load("C:/distance_ratio_train.RData")
-load("C:/distance_ratio_test.RData")
-load("C:/distance_train.Rdata")
-
 train <- function(feature_df = pairwise_data, par = NULL){
 
   trControl <- trainControl(method = "cv",
@@ -13,7 +5,7 @@ train <- function(feature_df = pairwise_data, par = NULL){
                           search = 'grid')
 
   rf_default <- train(emotion_idx ~ .,
-                    data = dat_train_selected_ratio_stand55,
+                    data = feature_df,
                     method = "rf",
                     metric = "Accuracy",
                     tuneLength = 15,
@@ -26,7 +18,7 @@ train <- function(feature_df = pairwise_data, par = NULL){
   grid_tuned <- expand.grid(.mtry = (1:15)) 
 
   rf_gridsearch <- train(emotion_idx ~ ., 
-                       data = dat_train_selected_ratio_stand55,
+                       data = feature_df,
                        method = 'rf',
                        metric = 'Accuracy',
                        tuneGrid = grid_tuned)
@@ -38,13 +30,13 @@ train <- function(feature_df = pairwise_data, par = NULL){
   for (maxnodes in c(1: 10)) {
   set.seed(2305)
   rf_maxnode <- train(emotion_idx ~ .,
-                      data = dat_train_selected_ratio_stand55,
+                      data = feature_df,
                       method = "rf",
                       metric = "Accuracy",
                       tuneGrid = tuneGrid,
                       trControl = trControl,
                       importance = TRUE,
-                      nodesize = 14,
+                      nodesize = 6,
                       maxnodes = maxnodes,
                       ntree = 300)
   current_iteration <- toString(maxnodes)
@@ -56,15 +48,15 @@ train <- function(feature_df = pairwise_data, par = NULL){
   store_maxtrees <- list()
   for (ntree in c(25, 50, 100, 150, 200, 300, 400, 500)) {
   set.seed(2305)
-  rf_maxtrees <- train(survived~.,
-                       data = data_train,
+  rf_maxtrees <- train(emotion_idx ~ .,
+                       data = feature_df,
                        method = "rf",
                        metric = "Accuracy",
                        tuneGrid = tuneGrid,
                        trControl = trControl,
                        importance = TRUE,
-                       nodesize = 14,
-                       maxnodes = 24,
+                       nodesize = 6,
+                       maxnodes = 10,
                        ntree = ntree)
   key <- toString(ntree)
   store_maxtrees[[key]] <- rf_maxtrees
@@ -79,7 +71,7 @@ train <- function(feature_df = pairwise_data, par = NULL){
   store_maxtrees <- list()
 
   rf_maxtrees <- train(emotion_idx ~ .,
-                     data = dat_train_selected_ratio_stand55,
+                     data = feature_df,
                      method = "rf",
                      metric = "Accuracy",
                      tuneGrid = grid_tuned,
@@ -91,7 +83,7 @@ train <- function(feature_df = pairwise_data, par = NULL){
 
   print(rf_maxtrees)
 
-#Based on the accuracy table, the accuracy rate and Kappa reache the highest when ntree = 300, trueLength = 12, nodeside = 6 and mtry = 2 which around 42% accuracy.
+#Based on the accuracy table, the accuracy rate and Kappa reach the highest when ntree = 300, trueLength = 12, nodeside = 6 and mtry = 2 which around 42% accuracy.
 
   set.seed(2305)
   tm_train = NA
@@ -100,7 +92,7 @@ train <- function(feature_df = pairwise_data, par = NULL){
                           search = 'grid')
   grid_tuned <- expand.grid(.mtry = 2) 
   tm_train <- system.time(train_final_model_rf <- train(emotion_idx ~ .,
-                                                      data = dat_train_selected_ratio_stand55,
+                                                      data = feature_df,
                                                       method = "rf",
                                                       metric = "Accuracy",
                                                       tuneGrid = grid_tuned,
@@ -109,7 +101,7 @@ train <- function(feature_df = pairwise_data, par = NULL){
                                                       nodesize = 6,
                                                       tuneLength = 12,
                                                       ntree = 300))
-  save(train_final_model_rf, file="C:/Users/tony/Desktop/train_final_model_rf.RData")
+  save(train_final_model_rf, file="../train_final_model_rf.RData")
   print(tm_train)
 
 return(model = train_final_model_rf)
