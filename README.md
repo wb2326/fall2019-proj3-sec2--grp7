@@ -23,10 +23,10 @@ In terms of classifiers, we considered GBM, LDA, KNN, Boosting, Random Forest an
 We also applied GBM as our baseline model with selected feature set to compare with our advanced model. The final advanced model choosen is (k) SVM+. For code details, please check on lib directory.
 
 Round 1 Model Comparison
-![Round 1 Model Comparison](Image source: https://github.com/TZstatsADS/fall2019-proj3-sec2--grp7/blob/master/figs/Round1.png)
+![](https://github.com/TZstatsADS/fall2019-proj3-sec2--grp7/blob/master/figs/Round1.png)
 
 Round 2 Model Comparison
-![Round 2 Model Comparison](Image source: https://github.com/TZstatsADS/fall2019-proj3-sec2--grp7/blob/master/figs/Round2.png)
+![](https://github.com/TZstatsADS/fall2019-proj3-sec2--grp7/blob/master/figs/Round2.png)
 
 **Contribution statement**: ([default](doc/a_note_on_contributions.md)) All team members contributed equally in all stages of this project. All team members approve our work presented in this GitHub repository including this contributions statement. 
 
