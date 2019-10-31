@@ -13,9 +13,9 @@ test <- function(k, dat_test){
 
   
   ### make predictions
-  pred <- class::knn(train = dat_train[,-which(names(dat_train) == 'emotion_idx')], 
+  pred <- class::knn(train = dat_train_selected[,-which(names(dat_train_selected) == 'emotion_idx')], 
                      test = dat_test[,-which(names(dat_test) == 'emotion_idx')], 
-                     cl = dat_train$emotion_idx, 
+                     cl = dat_train_selected$emotion_idx, 
                      k = k)
   return(pred)
 }

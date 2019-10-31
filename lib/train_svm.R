@@ -2,29 +2,28 @@
 ### Train a classification model with training features ###
 ###########################################################
 train <- function(feature_df = pairwise_data, par = NULL){
-  ### Train a classfication model using processed features from training images
+  ### Train an SVM model using processed features from training images
   
   ### Input:
   ### - a data frame containing features and labels
   ### - a parameter list
   ### Output: trained model
   
-
+  ### load libraries
+  library("e1071")
   
-  ### Train with knn
+  ### Train with SVM
   if(is.null(par)){
-    k = 5
+    gamma = 10^(-1)
+    cost = 1
   } else {
-    k = par$k
+    gamma = par$gamma
+    cost = par$cost
   }
   
-  # Install class package
-  # install.packages('class')
-  # Load class package
-  library(class)
-  
-  model <- knn(train=feature_df, k=k)
-  
-  return(model)
+  svm_model <- svm(emotion_idx~., data = feature_df,
+                    kernel = "radial", gamma = gamma, cost = cost) 
+
+  return(model = svm_model)
 }
 
