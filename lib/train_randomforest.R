@@ -112,15 +112,6 @@ train <- function(feature_df = pairwise_data, par = NULL){
   save(train_final_model_rf, file="C:/Users/tony/Desktop/train_final_model_rf.RData")
   print(tm_train)
 
-  tm_test = NA
-  if(run.test){
-  load(file = "C:/Users/tony/Desktop/train_final_model_rf.RData")
-  tm_test <- system.time(pred <- predict(train_final_model_rf, dat_test_selected_stand_test))
-  }
-  accu <- mean(dat_test_selected_stand_test$emotion_idx == pred)
-  cat("The accuracy of model is:", accu*100, "%.\n")
-  confusionMatrix(pred, dat_test_selected_stand_test$emotion_idx)
-
 return(model = train_final_model_rf)
 
 }
