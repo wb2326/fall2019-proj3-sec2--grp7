@@ -21,7 +21,15 @@ In this project, we created a classification engine for images of different faci
 In terms of classifiers, we considered GBM, LDA, KNN, Boosting, Random Forest and SVM methods. We cross compared the combinations of feature extraction methods and classifiers in order to find the optimal feature-classifer pair.
 
 We also applied GBM as our baseline model with selected feature set to compare with our advanced model. The final advanced model choosen is (k) SVM+. For code details, please check on lib directory.
-	
+
+Round 1 Model Comparison
+<img src="figs/CE.jpg" alt="Compound Emotions" width="500"/>
+(Image source: https://github.com/TZstatsADS/fall2019-proj3-sec2--grp7/blob/master/figs/Round1.png)
+
+Round 2 Model Comparison
+img src="figs/CE.jpg" alt="Compound Emotions" width="500"/>
+(Image source: https://github.com/TZstatsADS/fall2019-proj3-sec2--grp7/blob/master/figs/Round2.png)
+
 **Contribution statement**: ([default](doc/a_note_on_contributions.md)) All team members contributed equally in all stages of this project. All team members approve our work presented in this GitHub repository including this contributions statement. 
 
 
