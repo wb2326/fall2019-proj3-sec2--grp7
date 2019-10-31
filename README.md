@@ -25,15 +25,15 @@ We also use KNN as our baseline model to compare with selected feature set and o
 **Contribution statement**: ([default](doc/a_note_on_contributions.md)) All team members contributed equally in all stages of this project. All team members approve our work presented in this GitHub repository including this contributions statement. 
 
 
-1. Lu, Haotian: Designed and trained xxx model in xxx, compared the results for each model. Collaborated with xxx, completed the main.Rmd.
+1. Lu, Haotian: Designed and trained baseline GBM model, KNN, LDA, SVM model in python, compared the results for each model. Collaborated with Jiyuan Liu to complete the main.Rmd.
 
-2. Liu, Jiyuan: Designed and trained feature selection in R. 
+2. Liu, Jiyuan: Designed and trained feature selection in R. Collaborated with Haotian Lu to complete the main.Rmd.
 
-3. Guo, Xudong: Designed and trained xxx model in Python
+3. Guo, Xudong: Designed and trained random forest model in Python, helped with model training and feature selection process.
 
-4. Bao, Weijia: Collaborated with Yanyan Liu, prepared the presentation and slides; helped with ReadMe. 
+4. Bao, Weijia: Studied and trained Gabor filter for feature selection. Collaborated with Yanyan Liu, prepared the presentation and slides; helped with ReadMe. 
 
-5. Liu, Yanyan: Collaborated with Weijia Bao, prepared the presentation and slides; helped with ReadMe. 
+5. Liu, Yanyan: Studied and trained ksvm and svm method for feature selection. Collaborated with Weijia Bao, prepared the presentation and slides; helped with ReadMe. 
 
 Following [suggestions](http://nicercode.github.io/blog/2013-04-05-projects/) by [RICH FITZJOHN](http://nicercode.github.io/about/#Team) (@richfitz). This folder is orgarnized as follows.
 
