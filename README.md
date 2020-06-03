@@ -37,9 +37,9 @@ Round 2 Model Comparison
 
 3. Guo, Xudong: Designed and trained random forest model in Python, helped with model training and feature selection process.
 
-4. Bao, Weijia: Studied and trained Gabor filter for feature selection. Collaborated with Yanyan Liu, prepared the presentation and slides; helped with ReadMe. 
+4. Bao, Weijia: Studied and trained ksvm and svm method for feature selection. Collaborated with Yanyan Liu, prepared the presentation and slides; collaborated with Jiyuan Liu to complete the main.Rmd. 
 
-5. Liu, Yanyan: Studied and trained ksvm and svm method for feature selection. Collaborated with Weijia Bao, prepared the presentation and slides; helped with ReadMe. 
+5. Liu, Yanyan: Studied and trained Gabor filter for feature selection. Collaborated with Weijia Bao, prepared the presentation and slides; helped with ReadMe. 
 
 Following [suggestions](http://nicercode.github.io/blog/2013-04-05-projects/) by [RICH FITZJOHN](http://nicercode.github.io/about/#Team) (@richfitz). This folder is orgarnized as follows.
 
